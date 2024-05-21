@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+
+import Validator from "../Utils/Validator";
 import UserGenerator from "../Utils/UserGenerator";
 import CheckObjectProperties from "../Utils/CheckObjectProperties";
 
@@ -25,7 +27,7 @@ class UserController {
         try {
             const id = Number(req.params.id);
 
-            if (isNaN(id)) {
+            if (!Validator.CheckInteger(id)) {
                 res.json({status: 400, message: `Некорректный параметр ID`})
                 return
             }
@@ -54,10 +56,25 @@ class UserController {
 
             const { name, email, age } = req.body
 
+            if (!Validator.CheckRequired(name)) {
+                res.json({status: 400, message: `Некорректное имя!`})
+                return
+            }
+            
+            if (!Validator.CheckRequired(email) || !Validator.CheckEmail(String(email))) {
+                res.json({status: 400, message: `Некорректный email!`})
+                return
+            }
+
+            if (!Validator.CheckRequired(age) || !Validator.CheckInteger(age)) {
+                res.json({status: 400, message: `Некорректный возраст!`})
+                return
+            }
+
             const lastUserIndex = UserController.Users.length - 1
             const lastUser = UserController.Users[lastUserIndex]
 
-            const newUser: IUser = { id: lastUser.id + 1, name: name, email: email, age: age }
+            const newUser: IUser = { id: lastUser.id + 1, name: name, email: email, age: Number(age) }
 
             UserController.Users.push(newUser)
 
@@ -72,7 +89,7 @@ class UserController {
         try {
             const id = Number(req.params.id);
 
-            if (isNaN(id)) {
+            if (!Validator.CheckInteger(id)) {
                 res.json({status: 400, message: `Некорректный параметр ID`})
                 return
             }
@@ -87,11 +104,26 @@ class UserController {
 
                 const { name, email, age } = req.body
 
+                if (!Validator.CheckRequired(name)) {
+                    res.json({status: 400, message: `Некорректное имя!`})
+                    return
+                }
+                
+                if (!Validator.CheckRequired(email) || !Validator.CheckEmail(String(email))) {
+                    res.json({status: 400, message: `Некорректный email!`})
+                    return
+                }
+    
+                if (!Validator.CheckRequired(age) || !Validator.CheckInteger(age)) {
+                    res.json({status: 400, message: `Некорректный возраст!`})
+                    return
+                }
+
                 UserController.Users.forEach(user => {
                     if (user.id === id) {
                         user.name = name
                         user.email = email,
-                        user.age = age
+                        user.age = Number(age)
                     }
                 })
 
@@ -110,7 +142,7 @@ class UserController {
         try {
             const id = Number(req.params.id);
 
-            if (isNaN(id)) {
+            if (!Validator.CheckInteger(id)) {
                 res.json({status: 400, message: `Некорректный параметр ID`})
                 return
             }
