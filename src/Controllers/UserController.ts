@@ -169,7 +169,21 @@ class UserController {
     }
 
     static async GetByDomain(req: Request, res: Response) {
+        try {
+            const domain = String(req.params.domain);
+
+            const filtered = UserController.Users.filter(user => {
+                const [userEmailName, userEmailDomain] = user.email.split('@')
+    
+                return userEmailDomain === domain
+            })
+    
+            res.json({status: 200, message: filtered});
+        }
         
+        catch (error) {
+            console.log(error)
+        }
     }
 
     static async GetSortedByName(req: Request, res: Response) {
