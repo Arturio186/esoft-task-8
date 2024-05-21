@@ -165,7 +165,21 @@ class UserController {
     }
 
     static async GetOlderByAge(req: Request, res: Response) {
-        
+        try {
+            const age = Number(req.params.age);
+
+            if (!Validator.CheckInteger(age)) {
+                res.json({status: 400, message: `Некорректный параметр age`})
+                return
+            }
+
+            const filtered = UserController.Users.filter(user => user.age > age)
+    
+            res.json({status: 200, message: filtered});
+        }
+        catch (error) {
+            console.log(error)
+        }
     }
 
     static async GetByDomain(req: Request, res: Response) {
@@ -180,7 +194,7 @@ class UserController {
     
             res.json({status: 200, message: filtered});
         }
-        
+
         catch (error) {
             console.log(error)
         }
