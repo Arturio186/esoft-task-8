@@ -163,6 +163,33 @@ class UserController {
             console.log(error)
         }
     }
+
+    static async GetOlderByAge(req: Request, res: Response) {
+        
+    }
+
+    static async GetByDomain(req: Request, res: Response) {
+        
+    }
+
+    static async GetSortedByName(req: Request, res: Response) {
+        try {
+            const sorted = [...UserController.Users].sort((a, b) => {
+                if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                    return -1;
+                }
+                if (a.name.toLowerCase() > b.name.toLowerCase()) {
+                    return 1;
+                }
+                return 0;
+            })
+
+            res.json({status: 200, message: sorted});
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
 }
 
 export default UserController
