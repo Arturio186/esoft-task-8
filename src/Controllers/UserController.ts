@@ -47,13 +47,21 @@ class UserController {
 
     static async Add(req: Request, res: Response) {
         try {
-            const { id, name, email, age } = req.body
+            if (!CheckObjectProperties(req.body, ['name', 'email', 'age'])) {
+                res.json({status: 400, message: `Переданы не все параметры!`})
+                return
+            }
 
-            const newUser: IUser = { id: id, name: name, email: email, age: age }
+            const { name, email, age } = req.body
+
+            const lastUserIndex = UserController.Users.length - 1
+            const lastUser = UserController.Users[lastUserIndex]
+
+            const newUser: IUser = { id: lastUser.id + 1, name: name, email: email, age: age }
 
             UserController.Users.push(newUser)
 
-            res.json({status: 200, message: 'Пользователь добавлен!'});
+            res.json({status: 200, message: `Пользователь с id ${newUser.id} добавлен!`});
         }
         catch (error) {
             console.log(error)
@@ -72,6 +80,11 @@ class UserController {
             const user = UserController.Users.find(user => user.id === id)
 
             if (user) {
+                if (!CheckObjectProperties(req.body, ['name', 'email', 'age'])) {
+                    res.json({status: 400, message: `Переданы не все параметры!`})
+                    return
+                }
+
                 const { name, email, age } = req.body
 
                 UserController.Users.forEach(user => {
