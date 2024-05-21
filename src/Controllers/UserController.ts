@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import UserGenerator from "../Utils/UserGenerator";
+import CheckObjectProperties from "../Utils/CheckObjectProperties";
 
 interface IUser {
     id: number,
@@ -13,7 +14,6 @@ class UserController {
 
     static async GetAll(req: Request, res: Response) {
         try {
-            
             res.json({status: 200, message: UserController.Users});
         }
         catch (error) {
@@ -23,9 +23,14 @@ class UserController {
 
     static async GetByID(req: Request, res: Response) {
         try {
-            const { id } = req.params;
+            const id = Number(req.params.id);
 
-            const user = UserController.Users.find(user => user.id === Number(id))
+            if (isNaN(id)) {
+                res.json({status: 400, message: `Некорректный параметр ID`})
+                return
+            }
+            
+            const user = UserController.Users.find(user => user.id === id)
 
             if (user) {
                 res.json({status: 200, message: user});
@@ -57,11 +62,17 @@ class UserController {
 
     static async Update(req: Request, res: Response) {
         try {
-            const { id } = req.params;
+            const id = Number(req.params.id);
+
+            if (isNaN(id)) {
+                res.json({status: 400, message: `Некорректный параметр ID`})
+                return
+            }
+
             const { name, email, age } = req.body
 
             UserController.Users.forEach(user => {
-                if (user.id === Number(id)) {
+                if (user.id === id) {
                     user.name = name
                     user.email = email,
                     user.age = age
@@ -77,9 +88,14 @@ class UserController {
 
     static async Delete(req: Request, res: Response) {
         try {
-            const { id } = req.params;
+            const id = Number(req.params.id);
 
-            UserController.Users = UserController.Users.filter(user => user.id !== Number(id))
+            if (isNaN(id)) {
+                res.json({status: 400, message: `Некорректный параметр ID`})
+                return
+            }
+
+            UserController.Users = UserController.Users.filter(user => user.id !== id)
 
             res.json({status: 200, message: `Пользователь удален!`});
         }
