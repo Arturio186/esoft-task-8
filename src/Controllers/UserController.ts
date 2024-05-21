@@ -69,17 +69,24 @@ class UserController {
                 return
             }
 
-            const { name, email, age } = req.body
+            const user = UserController.Users.find(user => user.id === id)
 
-            UserController.Users.forEach(user => {
-                if (user.id === id) {
-                    user.name = name
-                    user.email = email,
-                    user.age = age
-                }
-            })
+            if (user) {
+                const { name, email, age } = req.body
 
-            res.json({status: 200, message: `Информация о пользователя обновлена!`});
+                UserController.Users.forEach(user => {
+                    if (user.id === id) {
+                        user.name = name
+                        user.email = email,
+                        user.age = age
+                    }
+                })
+
+                res.json({status: 200, message: `Информация о пользователя обновлена!`});
+            }
+            else {
+                res.json({status: 404, message: `Пользователь не найден!`});
+            }
         }
         catch (error) {
             console.log(error)
@@ -95,9 +102,17 @@ class UserController {
                 return
             }
 
-            UserController.Users = UserController.Users.filter(user => user.id !== id)
+            const user = UserController.Users.find(user => user.id === id)
 
-            res.json({status: 200, message: `Пользователь удален!`});
+            if (user) {
+                UserController.Users = UserController.Users.filter(user => user.id !== id)
+
+                res.json({status: 200, message: `Пользователь удален!`});
+            }
+            else {
+                res.json({status: 404, message: `Пользователь не найден!`});
+            }
+
         }
         catch (error) {
             console.log(error)
