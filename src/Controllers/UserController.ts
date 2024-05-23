@@ -5,10 +5,10 @@ import UserGenerator from "../Utils/UserGenerator";
 import CheckObjectProperties from "../Utils/CheckObjectProperties";
 
 interface IUser {
-    id: number,
-    name: string,
-    email: string,
-    age: number
+    id: number;
+    name: string;
+    email: string;
+    age: number;
 }
 
 class UserController {
@@ -16,10 +16,9 @@ class UserController {
 
     static async GetAll(req: Request, res: Response) {
         try {
-            res.json({status: 200, message: UserController.Users});
-        }
-        catch (error) {
-            console.log(error)
+            res.status(200).json({ message: UserController.Users });
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -28,60 +27,66 @@ class UserController {
             const id = Number(req.params.id);
 
             if (!Validator.CheckInteger(id)) {
-                res.json({status: 400, message: `Некорректный параметр ID`})
-                return
+                res.status(400).json({ message: `Некорректный параметр ID` });
+                return;
             }
-            
-            const user = UserController.Users.find(user => user.id === id)
+
+            const user = UserController.Users.find((user) => user.id === id);
 
             if (user) {
-                res.json({status: 200, message: user});
+                res.status(200).json({ message: user });
+            } else {
+                res.status(404).json({ message: `Пользователь не найден!` });
             }
-            else {
-                res.json({status: 404, message: `Пользователь не найден!`});
-            }
-            
-        }
-        catch (error) {
-            console.log(error)
+        } catch (error) {
+            console.log(error);
         }
     }
 
     static async Add(req: Request, res: Response) {
         try {
-            if (!CheckObjectProperties(req.body, ['name', 'email', 'age'])) {
-                res.json({status: 400, message: `Переданы не все параметры!`})
-                return
+            if (!CheckObjectProperties(req.body, ["name", "email", "age"])) {
+                res.status(400).json({ message: `Переданы не все параметры!` });
+                return;
             }
 
-            const { name, email, age } = req.body
+            const { name, email, age } = req.body;
 
             if (!Validator.CheckRequired(name)) {
-                res.json({status: 400, message: `Некорректное имя!`})
-                return
+                res.status(400).json({
+                    message: `Некорректное имя!`,
+                });
+                return;
             }
-            
-            if (!Validator.CheckRequired(email) || !Validator.CheckEmail(String(email))) {
-                res.json({status: 400, message: `Некорректный email!`})
-                return
+
+            if (
+                !Validator.CheckRequired(email) ||
+                !Validator.CheckEmail(String(email))
+            ) {
+                res.status(400).json({ message: `Некорректный email!` });
+                return;
             }
 
             if (!Validator.CheckRequired(age) || !Validator.CheckInteger(age)) {
-                res.json({status: 400, message: `Некорректный возраст!`})
-                return
+                res.status(400).json({ message: `Некорректный возраст!` });
+                return;
             }
 
-            const lastUserIndex = UserController.Users.length - 1
-            const lastUser = UserController.Users[lastUserIndex]
+            const lastUserIndex = UserController.Users.length - 1;
+            const lastUser = UserController.Users[lastUserIndex];
 
-            const newUser: IUser = { id: lastUser.id + 1, name: name, email: email, age: Number(age) }
+            const newUser: IUser = {
+                id: lastUser.id + 1,
+                name: name,
+                email: email,
+                age: Number(age),
+            };
 
-            UserController.Users.push(newUser)
+            UserController.Users.push(newUser);
 
-            res.json({status: 200, message: `Пользователь с id ${newUser.id} добавлен!`});
-        }
-        catch (error) {
-            console.log(error)
+            res.status(200).json({ message: `Пользователь с id ${newUser.id} добавлен!` });
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -90,51 +95,58 @@ class UserController {
             const id = Number(req.params.id);
 
             if (!Validator.CheckInteger(id)) {
-                res.json({status: 400, message: `Некорректный параметр ID`})
-                return
+                res.status(400).json({ message: `Некорректный параметр ID` });
+                return;
             }
 
-            const user = UserController.Users.find(user => user.id === id)
+            const user = UserController.Users.find((user) => user.id === id);
 
             if (user) {
-                if (!CheckObjectProperties(req.body, ['name', 'email', 'age'])) {
-                    res.json({status: 400, message: `Переданы не все параметры!`})
-                    return
+                if (
+                    !CheckObjectProperties(req.body, ["name", "email", "age"])
+                ) {
+                    res.status(400).json({ message: `Переданы не все параметры!` });
+                    return;
                 }
 
-                const { name, email, age } = req.body
+                const { name, email, age } = req.body;
 
                 if (!Validator.CheckRequired(name)) {
-                    res.json({status: 400, message: `Некорректное имя!`})
-                    return
-                }
-                
-                if (!Validator.CheckRequired(email) || !Validator.CheckEmail(String(email))) {
-                    res.json({status: 400, message: `Некорректный email!`})
-                    return
-                }
-    
-                if (!Validator.CheckRequired(age) || !Validator.CheckInteger(age)) {
-                    res.json({status: 400, message: `Некорректный возраст!`})
-                    return
+                    res.status(400).json({ message: `Некорректное имя!` });
+                    return;
                 }
 
-                UserController.Users.forEach(user => {
+                if (
+                    !Validator.CheckRequired(email) ||
+                    !Validator.CheckEmail(String(email))
+                ) {
+                    res.status(400).json({ message: `Некорректный email!` });
+                    return;
+                }
+
+                if (
+                    !Validator.CheckRequired(age) ||
+                    !Validator.CheckInteger(age)
+                ) {
+                    res.status(400).json({ message: `Некорректный возраст!` });
+                    return;
+                }
+
+                UserController.Users.forEach((user) => {
                     if (user.id === id) {
-                        user.name = name
-                        user.email = email,
-                        user.age = Number(age)
+                        user.name = name;
+                        (user.email = email), (user.age = Number(age));
                     }
-                })
+                });
 
-                res.json({status: 200, message: `Информация о пользователя обновлена!`});
+                res.status(200).json({ message: `Информация о пользователя обновлена!` });
+            } else {
+                res.status(404).json({
+                    message: `Пользователь не найден!`,
+                });
             }
-            else {
-                res.json({status: 404, message: `Пользователь не найден!`});
-            }
-        }
-        catch (error) {
-            console.log(error)
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -143,24 +155,23 @@ class UserController {
             const id = Number(req.params.id);
 
             if (!Validator.CheckInteger(id)) {
-                res.json({status: 400, message: `Некорректный параметр ID`})
-                return
+                res.status(400).json({ message: `Некорректный параметр ID` });
+                return;
             }
 
-            const user = UserController.Users.find(user => user.id === id)
+            const user = UserController.Users.find((user) => user.id === id);
 
             if (user) {
-                UserController.Users = UserController.Users.filter(user => user.id !== id)
+                UserController.Users = UserController.Users.filter(
+                    (user) => user.id !== id
+                );
 
-                res.json({status: 200, message: `Пользователь удален!`});
+                res.status(200).json({ message: `Пользователь удален!` });
+            } else {
+                res.status(404).json({ message: `Пользователь не найден!` });
             }
-            else {
-                res.json({status: 404, message: `Пользователь не найден!`});
-            }
-
-        }
-        catch (error) {
-            console.log(error)
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -169,16 +180,17 @@ class UserController {
             const age = Number(req.params.age);
 
             if (!Validator.CheckInteger(age)) {
-                res.json({status: 400, message: `Некорректный параметр age`})
-                return
+                res.status(400).json({ message: `Некорректный параметр age` });
+                return;
             }
 
-            const filtered = UserController.Users.filter(user => user.age > age)
-    
-            res.json({status: 200, message: filtered});
-        }
-        catch (error) {
-            console.log(error)
+            const filtered = UserController.Users.filter(
+                (user) => user.age > age
+            );
+
+            res.status(200).json({ message: filtered });
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -186,17 +198,15 @@ class UserController {
         try {
             const domain = String(req.params.domain);
 
-            const filtered = UserController.Users.filter(user => {
-                const [userEmailName, userEmailDomain] = user.email.split('@')
-    
-                return userEmailDomain === domain
-            })
-    
-            res.json({status: 200, message: filtered});
-        }
+            const filtered = UserController.Users.filter((user) => {
+                const [userEmailName, userEmailDomain] = user.email.split("@");
 
-        catch (error) {
-            console.log(error)
+                return userEmailDomain === domain;
+            });
+
+            res.status(200).json({ message: filtered });
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -210,14 +220,13 @@ class UserController {
                     return 1;
                 }
                 return 0;
-            })
+            });
 
-            res.json({status: 200, message: sorted});
-        }
-        catch (error) {
-            console.log(error)
+            res.status(200).json({ message: sorted });
+        } catch (error) {
+            console.log(error);
         }
     }
 }
 
-export default UserController
+export default UserController;
